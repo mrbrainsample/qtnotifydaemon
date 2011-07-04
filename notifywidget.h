@@ -14,7 +14,6 @@ public:
 	QTimer *timer;
 	QClickLabel *text;
 	QClickLabel *icon;
-	QString readConfigString(QString);
 	void checkIfNeedToShow();
 	void appendMsg(); //append msg's that can be appended
 	std::vector<message> *messageStack;
