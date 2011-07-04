@@ -22,9 +22,6 @@ struct message
 	bool isComplete;
 	};
 
-
-
-
 class QMyDBusAbstractAdaptor: public QDBusAbstractAdaptor
 {
 	Q_OBJECT

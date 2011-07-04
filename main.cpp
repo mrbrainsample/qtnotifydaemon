@@ -35,9 +35,6 @@ for(int i=0;i<argc;i++)
 		debugMode=true;
 		continue;
 		}
-
-
-	
 	}
 
 int j=fork();
