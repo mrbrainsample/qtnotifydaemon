@@ -9,18 +9,6 @@
 
 class NotifyArea;
 
-struct imageData
-{
-    int width;
-    int height;
-    int rowstride;
-    bool hasAlpha;
-    int bitsPerSample;
-    int channels;
-    QByteArray data;
-};
-	
-
 struct message
 	{
 	int timeout;

@@ -12,18 +12,21 @@ QMyDBusAbstractAdaptor::QMyDBusAbstractAdaptor(QApplication *application, Notify
 ////////////////////////////////////////////////////////////////////////////////////////////////
 QPixmap QMyDBusAbstractAdaptor::getPixmapFromHint(QVariant argument)
 {
-	imageData image;
+	int width, height, rowstride, bitsPerSample, channels;
+    bool hasAlpha;
+    QByteArray data;
+
 	const QDBusArgument arg=argument.value<QDBusArgument>();
 	arg.beginStructure();
-	arg >> image.width;
-	arg >> image.height;
-	arg >> image.rowstride;
-	arg >> image.hasAlpha;
-	arg >> image.bitsPerSample;
-	arg >> image.channels;
-	arg >> image.data;
+	arg >> width;
+	arg >> height;
+	arg >> rowstride;
+	arg >> hasAlpha;
+	arg >> bitsPerSample;
+	arg >> channels;
+	arg >> data;
 	arg.endStructure();
-	QImage img=QImage((uchar*)image.data.constData(),image.width,image.height, QImage::Format_ARGB32).rgbSwapped();
+	QImage img=QImage((uchar*)data.constData(),width,height, QImage::Format_ARGB32).rgbSwapped();
 	QPixmap p;
 	p.convertFromImage(img);
 	return p;
