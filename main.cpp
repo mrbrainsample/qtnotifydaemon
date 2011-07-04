@@ -1,9 +1,12 @@
 #include <pwd.h>
+#include <signal.h>
 #include "dbus.h"
 #include "notifywidget.h"
 #include "notifyarea.h"
 
 bool debugMode=false;
+void catchSighup(int);
+NotifyArea *area;
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
@@ -48,7 +51,6 @@ if(j<0)
 	}
 
 QApplication app(argc,argv);
-NotifyArea *area;
 area = new NotifyArea(config, debugMode);
 QMyDBusAbstractAdaptor adaptor(&app, area);
 QDBusConnection connection = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "org.freedesktop.Notifications");
@@ -62,6 +64,12 @@ if (!connection.registerObject("/org/freedesktop/Notifications", &adaptor, QDBus
 	return 1;
 	}
 
+
+struct sigaction *sa;
+sa=new struct sigaction;
+sa->sa_handler = catchSighup;
+sigaction(SIGHUP, sa, 0);
+
 QString return_id;
 adaptor.Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000, return_id);
 
@@ -70,4 +78,8 @@ return 0;
 }
 ///////////////////////////////////////////////////////////////
 
+void catchSighup(int param)
+{
+area->ReReadConfig();
+}
 

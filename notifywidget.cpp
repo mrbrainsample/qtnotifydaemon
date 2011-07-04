@@ -45,7 +45,7 @@ icon->setAttribute(Qt::WA_NoSystemBackground);
 
 void NotifyWidget::fadeWidget()
 {
-if(this->windowOpacity()>0)
+if(this->windowOpacity()>0 && this->isVisible())
 	{
 	this->setWindowOpacity(this->windowOpacity() - parent->maxOpacity/10);
 	fadeTimer->start(FADE_TIMER_TIMEOUT);
@@ -100,6 +100,7 @@ if(messageStack->size()>0)
 	}
 	else
 	{
+	if(parent->debugMode) fprintf(stderr,"Starting fade.\n");
 	fadeTimer->start(FADE_TIMER_TIMEOUT);
 	}
 }
@@ -108,9 +109,6 @@ if(messageStack->size()>0)
 void NotifyWidget::showWidget()
 {
 if(parent->debugMode) fprintf(stderr,"Attempt to show new notification\n");
-fadeTimer->stop();
-
-
 QString myText="";
 if(messageStack->size()>0)
 {
@@ -166,7 +164,7 @@ if(messageStack->size()>0)
 	messageStack->front().isComplete=true;
 
 	this->setVisible(false);
-//	this->repaint(this->childrenRect());
+	fadeTimer->stop();
 	this->setVisible(true);
 	this->timer->start(messageStack->front().timeout);
 }			

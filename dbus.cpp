@@ -11,23 +11,23 @@ QMyDBusAbstractAdaptor::QMyDBusAbstractAdaptor(QApplication *application, Notify
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 QPixmap QMyDBusAbstractAdaptor::getPixmapFromHint(QVariant argument)
-	{
-		imageData image;
-		const QDBusArgument arg=argument.value<QDBusArgument>();
-		arg.beginStructure();
-		arg >> image.width;
-		arg >> image.height;
-		arg >> image.rowstride;
-		arg >> image.hasAlpha;
-		arg >> image.bitsPerSample;
-		arg >> image.channels;
-		arg >> image.data;
-		arg.endStructure();
-		QImage img=QImage((uchar*)image.data.constData(),image.width,image.height, QImage::Format_ARGB32).rgbSwapped();
-		QPixmap p;
-		p.convertFromImage(img);
-		return p;
-	}
+{
+	imageData image;
+	const QDBusArgument arg=argument.value<QDBusArgument>();
+	arg.beginStructure();
+	arg >> image.width;
+	arg >> image.height;
+	arg >> image.rowstride;
+	arg >> image.hasAlpha;
+	arg >> image.bitsPerSample;
+	arg >> image.channels;
+	arg >> image.data;
+	arg.endStructure();
+	QImage img=QImage((uchar*)image.data.constData(),image.width,image.height, QImage::Format_ARGB32).rgbSwapped();
+	QPixmap p;
+	p.convertFromImage(img);
+	return p;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned QMyDBusAbstractAdaptor::Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout, QString &return_id)
 {
@@ -59,7 +59,7 @@ msg.id = id;
 
 //		-----------------------------------------------------------------------------
 //							Set icon
-fprintf(stderr," *** Attempt to set icon...\n");
+if(widget->debugMode) fprintf(stderr," *** Attempt to set icon...\n");
 int maxiconsize = widget->readConfigString("MaxIconSize").toInt();
 msg.icon = new QPixmap();
 
@@ -84,7 +84,7 @@ if(!QPixmap(icon).isNull()) //Check if icon file is available, then check if it 
 		*msg.icon = QIcon(":/images/"+icon+".svg").pixmap(maxiconsize);
 		}
 
-fprintf(stderr," *** Icon set successfully.\n");
+if(widget->debugMode) fprintf(stderr," *** Icon set successfully.\n");
 
 			
 msg.header = summary;
@@ -92,41 +92,35 @@ msg.text = body;
 
 //		-----------------------------------------------------------------------------
 //								Search by ID
-fprintf(stderr," *** Attempt to search basic notifications by id...\n");
+if(widget->debugMode) fprintf(stderr," *** Attempt to search basic notifications by id...\n");
 for(std::vector<message>::iterator iter=widget->messageWidget->messageStack->begin(); iter != widget->messageWidget->messageStack->end(); iter++)
 	{
 	if(iter->id == id && id > 0)
 		{
 		*iter=msg;
-//		widget->messageWidget->messageStack->insert(iter,msg);
-//		iter++;
-//		widget->messageWidget->messageStack->erase(iter);
 		foundById=true;
 		break;
 		}
 	}
-fprintf(stderr," *** ... done!\n");
-fprintf(stderr," *** Attempt to search private-synchronous notifications by id...\n");
+if(widget->debugMode) fprintf(stderr," *** ... done!\n");
+if(widget->debugMode) fprintf(stderr," *** Attempt to search private-synchronous notifications by id...\n");
 
 for(std::vector<message>::iterator iter=widget->notificationWidget->messageStack->begin(); iter != widget->notificationWidget->messageStack->end(); iter++)
 	{
 	if(iter->id == id && id > 0)
 		{
-//		widget->notificationWidget->messageStack->insert(iter,msg);
-//		iter++;
-//		widget->notificationWidget->messageStack->erase(iter);
 		*iter=msg;
 		foundById=true;
 		break;
 		}
 	}
-fprintf(stderr," *** Search by id finished.\n");
+if(widget->debugMode) fprintf(stderr," *** Search by id finished.\n");
 
 
 //		-----------------------------------------------------------------------------
 //						Handle synchronous notifications
 
-fprintf(stderr," *** Take care of private-synchronous notifications.\n");
+if(widget->debugMode) fprintf(stderr," *** Take care of private-synchronous notifications.\n");
 		
 if(hints["x-canonical-private-synchronous"].toString().size()>0)
 	{
@@ -143,11 +137,11 @@ if(hints["x-canonical-private-synchronous"].toString().size()>0)
 		}
 
 	}
-fprintf(stderr," *** ... done.\n");
+if(widget->debugMode) fprintf(stderr," *** ... done.\n");
 
 //		-----------------------------------------------------------------------------
 
-fprintf(stderr," *** Pushing notification to stack...");
+if(widget->debugMode) fprintf(stderr," *** Pushing notification to stack...");
 
 if(!foundById)
 if(!foundSynchronous)
@@ -162,7 +156,7 @@ if(!foundSynchronous)
 		}
 	}
 
-fprintf(stderr," *** ... done!\n");
+if(widget->debugMode) fprintf(stderr," *** ... done!\n");
 
 widget->messageWidget->checkIfNeedToShow();
 widget->notificationWidget->checkIfNeedToShow();
