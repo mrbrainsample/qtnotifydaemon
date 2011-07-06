@@ -1,4 +1,3 @@
-#include <pwd.h>
 #include <signal.h>
 #include "dbus.h"
 #include "notifywidget.h"
@@ -12,9 +11,7 @@ NotifyArea *area;
 int main(int argc, char *argv[])
 {
 char config[255]="";
-struct passwd *pw = getpwuid(getuid());
-strcpy(config,pw->pw_dir);
-strcat(config,"/.config/qtnotifydaemon/qtnotifydaemon.conf");
+strcat(config,"/etc/qtnotifydaemon.conf");
 
 for(int i=0;i<argc;i++)
 	{

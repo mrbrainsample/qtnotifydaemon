@@ -56,6 +56,10 @@ if(!file.fail())
 			}
 		}
 	}
+	else
+	{
+	fprintf(stderr,"Cant open config %s!",config);
+	}
 if(debugMode) fprintf(stderr,"Returning config string: '%s' = '%s'.\n", param.toStdString().c_str(), result.toStdString().c_str());
 return result;
 }
