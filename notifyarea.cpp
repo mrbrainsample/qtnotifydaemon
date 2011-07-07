@@ -64,10 +64,10 @@ if(debugMode) fprintf(stderr,"Returning config string: '%s' = '%s'.\n", param.to
 return result;
 }
 
-void NotifyArea::NotificationClosed(unsigned id, unsigned reason)
+void NotifyArea::CloseNotification(unsigned id)
 {
 if(debugMode) fprintf(stderr,"Closing Notification with id=%d...\n",(int)id);
-for(std::vector<message>::iterator iter=messageStack.begin(); iter != messageStack.end(); iter++)
+for(std::vector<Message>::iterator iter=messageStack.begin(); iter != messageStack.end(); iter++)
 	{
 	if(iter->id == id)
 		{
@@ -76,7 +76,7 @@ for(std::vector<message>::iterator iter=messageStack.begin(); iter != messageSta
 		messageWidget->checkIfNeedToShow();
 		}
 	}
-for(std::vector<message>::iterator iter=notificationStack.begin(); iter != notificationStack.end(); iter++)
+for(std::vector<Message>::iterator iter=notificationStack.begin(); iter != notificationStack.end(); iter++)
 	{
 	if(iter->id == id)
 		{

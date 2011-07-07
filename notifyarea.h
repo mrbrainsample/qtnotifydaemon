@@ -2,16 +2,30 @@
 #include <vector>
 #include <string.h>
 
-struct message;
 class NotifyWidget;
-
-class NotifyArea
+struct Message
 {
+	public:
+int timeout;
+int urgency;
+unsigned id;
+QPixmap *icon;
+QString app_name;
+QString text;
+QVariantMap hints;
+QString header;
+bool isComplete;
+};
+
+
+
+class NotifyArea : public QObject
+{
+Q_OBJECT
 public:
 
 NotifyArea(char*, bool);
 QString readConfigString(QString);
-void NotificationClosed(unsigned, unsigned);
 QPoint getWidgetPosition(char *);
 void ReReadConfig();
 
@@ -25,9 +39,14 @@ float maxOpacity;
 QString widgetStyle;
 QString UrgencyTag[4];
 
-private: 
-std::vector<message> messageStack;
-std::vector<message> notificationStack;
+public slots:
+void CloseNotification(unsigned);
 
+private: 
+std::vector<Message> messageStack;
+std::vector<Message> notificationStack;
+
+signals:
+void NotificationClosed(unsigned,unsigned);
 
 };

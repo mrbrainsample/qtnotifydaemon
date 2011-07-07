@@ -13,7 +13,7 @@
 
 
 
-NotifyWidget::NotifyWidget(const char *name, std::vector<message> *msg, NotifyArea *p)
+NotifyWidget::NotifyWidget(const char *name, std::vector<Message> *msg, NotifyArea *p)
 {
 strcpy(widgetName,name);
 messageStack = msg;
@@ -62,9 +62,9 @@ if(this->windowOpacity()>0 && this->isVisible())
 void NotifyWidget::appendMsg()
 {
 if(parent->debugMode) fprintf(stderr,"Appending messages\n");
-for(std::vector<message>::iterator iter=messageStack->begin(); iter != messageStack->end(); iter++)	//Check if need to append
+for(std::vector<Message>::iterator iter=messageStack->begin(); iter != messageStack->end(); iter++)	//Check if need to append
 	{
-	for(std::vector<message>::iterator iter2=iter; iter2 != messageStack->end(); iter2++)
+	for(std::vector<Message>::iterator iter2=iter; iter2 != messageStack->end(); iter2++)
 	{
 	if(iter->app_name == iter2->app_name && iter->header == iter2->header && !iter2->isComplete  && iter->hints["x-canonical-append"].toString() == "allow" && iter != iter2)
 		{
@@ -74,7 +74,7 @@ for(std::vector<message>::iterator iter=messageStack->begin(); iter != messageSt
 		}
 	}
 	}
-for(std::vector<message>::iterator iter=messageStack->begin(); iter != messageStack->end(); )	//Erase messages, that are already appended
+for(std::vector<Message>::iterator iter=messageStack->begin(); iter != messageStack->end(); )	//Erase messages, that are already appended
 	{
 	if(iter->isComplete && iter != messageStack->begin())
 		{
@@ -92,6 +92,7 @@ void NotifyWidget::hideWidget()
 {
 if(parent->debugMode) fprintf(stderr,"Attempt to hide widget\n");
 this->timer->stop();
+emit NotificationClosed(messageStack->front().id,4);
 messageStack->erase(messageStack->begin());
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
 if(messageStack->size()>0)
