@@ -27,7 +27,7 @@ public:
 
 	QPixmap getPixmapFromHint(QVariant argument);
 
-	Q_INVOKABLE unsigned Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout/*, QString &return_id*/);
+	Q_INVOKABLE unsigned Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout);
 
 signals:
 

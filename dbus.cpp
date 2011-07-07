@@ -35,7 +35,7 @@ QPixmap QMyDBusAbstractAdaptor::getPixmapFromHint(QVariant argument)
 	return p;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned QMyDBusAbstractAdaptor::Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout/* QString &return_id*/)
+unsigned QMyDBusAbstractAdaptor::Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout)
 {
 if(notificationArea->debugMode) fprintf(stderr," *** Receiving new notification...\n");
 Message msg;
@@ -85,7 +85,7 @@ if(!QPixmap(icon).isNull()) //Check if icon file is available, then check if it 
 		{
 		*msg.icon = QIcon::fromTheme(icon).pixmap(maxiconsize);
 		}
-	else if(!QIcon(":/images/"+icon+".svg").isNull())
+	else if(QFile::exists(":/images/"+icon+".svg") && !QIcon(":/images/"+icon+".svg").isNull())
 		{
 		*msg.icon = QIcon(":/images/"+icon+".svg").pixmap(maxiconsize);
 		}
