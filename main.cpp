@@ -1,4 +1,6 @@
 #include <signal.h>
+#include<sys/stat.h>
+#include <pwd.h>
 #include "dbus.h"
 #include "notifywidget.h"
 #include "notifyarea.h"
@@ -7,11 +9,52 @@ bool debugMode=false;
 void catchSighup(int);
 NotifyArea *area;
 
+void createConfigIfNotExists(char *config, char *homedir)
+{
+FILE *f;
+char configdir[255];
+strcpy(configdir,homedir);
+strcat(configdir,"/.config/qtnotifydaemon/");
+mkdir(configdir, S_IREAD | S_IWRITE | S_IEXEC | S_IRGRP | S_IROTH);
+if(!fopen(config,"r"))
+	{
+	f=fopen(config,"w");
+	char s[1024]="#Widget style\n\
+GeneralStyle = margin: 0px; background: black; border: 3px solid white; color: lime; border-radius: 15px; font-size: 14px;\n\
+\n\
+#Style of notifications with low urgency\n\
+UrgencyTag1 = <b>\n\
+\n\
+#Style of notifications with normal urgency\n\
+UrgencyTag2 = <b><u>\n\
+\n\
+#Style of notifications with critical urgency\n\
+UrgencyTag3 = <b><u><font color=red>\n\
+\n\
+#Opacity floating point value: 0-1\n\
+Opacity = 0.8\n\
+MaxIconSize = 80\n\
+\n\
+#Widgets position: 0 - bottomRight, 1 - bottomRight, 2 - topLeft, 3 - topRight\n\
+#Positions of two widgets must differ\n\
+MessageWidgetPosition = 0\n\
+NotificationWidgetPosition = 2\n\
+";
+	fprintf(f,"%s",s);
+	fclose(f);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
 char config[255]="";
-strcat(config,"/etc/qtnotifydaemon.conf");
+
+struct passwd *pw = getpwuid(getuid());
+strcpy(config,pw->pw_dir);
+strcat(config,"/.config/qtnotifydaemon/qtnotifydaemon.conf");
+
+createConfigIfNotExists(config, pw->pw_dir);
 
 for(int i=0;i<argc;i++)
 	{
