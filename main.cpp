@@ -1,5 +1,5 @@
 #include <signal.h>
-#include<sys/stat.h>
+#include <sys/stat.h>
 #include <pwd.h>
 #include "dbus.h"
 #include "notifywidget.h"
