@@ -60,6 +60,13 @@ unsigned QMyDBusAbstractAdaptor::Notify(QString app_name, unsigned id, QString i
 if(notificationArea->debugMode) fprintf(stderr," *** Receiving new notification...\n");
 Message msg;
 bool ok, foundSynchronous=false, foundById=false;
+
+body.replace("&lt;",   "<",     Qt::CaseSensitive); //replace <>"' \n symbols
+body.replace("&gt;",   ">",     Qt::CaseSensitive);
+body.replace("&quot;", "\"",    Qt::CaseSensitive);
+body.replace("&apos;", "'",     Qt::CaseSensitive);
+body.replace("\n",     "<br>",  Qt::CaseSensitive);
+
 msg.app_name = app_name;
 msg.isComplete = false;
 msg.hints = hints;
