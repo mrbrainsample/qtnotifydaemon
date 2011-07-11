@@ -1,0 +1,11 @@
+Qtnotifydaemon is flexible and configurable notification daemon. It supports HTML, close by click, synchronous messages(like notifications about sound volume), its appearance is fully user-defined.
+
+INSTALL
+To build from source type "qmake && make", copy "qtnotifydaemon" binary file to /usr/bin/ , and put next text to /usr/share/dbus-1/services/org.freedesktop.Notifications.service :
+
+[D-BUS Service]
+Name=org.freedesktop.Notifications
+Exec=/usr/bin/qtnotifydaemon
+
+CONFIGURATION
+Default config file $HOME/.config/qtnotifydaemon/qtnotifydaemon.conf will appear after first launch.
