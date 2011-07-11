@@ -87,7 +87,11 @@ for(std::vector<Message>::iterator iter=messageStack->begin(); iter != messageSt
 	{
 	for(std::vector<Message>::iterator iter2=iter; iter2 != messageStack->end(); iter2++)
 	{
-	if(iter->app_name == iter2->app_name && iter->header == iter2->header && !iter2->isComplete  && iter->hints["x-canonical-append"].toString() == "allow" && iter != iter2)
+	if(iter->app_name == iter2->app_name && 
+	   iter->header == iter2->header && 
+	   !iter2->isComplete  && 
+	   (iter->hints["x-canonical-append"].toString() == "allow" || iter->hints["append"].toString() == "allow") && 
+	   iter != iter2)
 		{
 		if(iter2->text.size()>0)iter->text += QString("<br>") + iter2->text;
 		iter->isComplete=false;

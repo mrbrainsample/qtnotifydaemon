@@ -50,6 +50,8 @@ public:
 
 	Q_INVOKABLE unsigned Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout);
 
+	Q_INVOKABLE void CloseNotification(unsigned id);
+
 signals:
 
 	Q_INVOKABLE void NotificationClosed(unsigned id, unsigned reason);

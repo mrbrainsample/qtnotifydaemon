@@ -22,7 +22,47 @@
 #include "notifyarea.h"
 #include "notifywidget.h"
 
+void QMyDBusAbstractAdaptor::CloseNotification(unsigned id)
+{
+if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search and close basic notifications by id...\n");
+for(std::vector<Message>::iterator idIter=notificationArea->messageWidget->messageStack->begin(); idIter != notificationArea->messageWidget->messageStack->end(); idIter++)
+	{
+	if(idIter->id == id && id > 0)
+		{
+		if(idIter == notificationArea->messageWidget->messageStack->begin())
+			{
+			notificationArea->messageWidget->hideWidget();
+			}
+			else
+			{
+			notificationArea->messageWidget->messageStack->erase(idIter);
+			emit NotificationClosed(id,4);
+			}
+		break;
+		}
+	}
+if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search and close private-synchronous notifications by id...\n");
 
+for(std::vector<Message>::iterator idIter=notificationArea->notificationWidget->messageStack->begin(); idIter != notificationArea->notificationWidget->messageStack->end(); idIter++)
+	{
+	if(idIter->id == id && id > 0)
+		{
+		if(idIter == notificationArea->notificationWidget->messageStack->begin())
+			{
+			notificationArea->notificationWidget->hideWidget();
+			}
+			else
+			{
+			notificationArea->notificationWidget->messageStack->erase(idIter);
+			emit NotificationClosed(id,4);
+			}
+		break;
+		}
+	}
+}
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QMyDBusAbstractAdaptor::QMyDBusAbstractAdaptor(QApplication *application, NotifyArea *Area) : QDBusAbstractAdaptor(application)
 	{
 	notificationArea = Area;
@@ -180,6 +220,7 @@ if(notificationArea->debugMode) fprintf(stderr," *** ... done.\n");
 if(notificationArea->debugMode) fprintf(stderr," *** Pushing notification to stack...");
 
 if(!foundById)
+{
 if(!foundSynchronous)
 	{
 	if(hints["x-canonical-private-synchronous"].toString().size()>0)
@@ -191,6 +232,7 @@ if(!foundSynchronous)
 		notificationArea->messageWidget->messageStack->push_back(msg);
 		}
 	}
+}
 
 if(notificationArea->debugMode) fprintf(stderr," *** ... done!\n");
 
