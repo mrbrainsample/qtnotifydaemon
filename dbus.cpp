@@ -61,10 +61,13 @@ if(notificationArea->debugMode) fprintf(stderr," *** Receiving new notification.
 Message msg;
 bool ok, foundSynchronous=false, foundById=false;
 
-body.replace("&lt;",   "<",     Qt::CaseSensitive); //replace <>"' \n symbols
-body.replace("&gt;",   ">",     Qt::CaseSensitive);
-body.replace("&quot;", "\"",    Qt::CaseSensitive);
-body.replace("&apos;", "'",     Qt::CaseSensitive);
+if(notificationArea->convertSpecialSymbols == 1)
+	{
+	body.replace("&lt;",   "<",     Qt::CaseSensitive); //replace <>"' \n symbols
+	body.replace("&gt;",   ">",     Qt::CaseSensitive);
+	body.replace("&quot;", "\"",    Qt::CaseSensitive);
+	body.replace("&apos;", "'",     Qt::CaseSensitive);
+	}
 body.replace("\n",     "<br>",  Qt::CaseSensitive);
 
 msg.app_name = app_name;
@@ -93,7 +96,7 @@ msg.id = id;
 //		-----------------------------------------------------------------------------
 //							Set icon
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to set icon...\n");
-int maxiconsize = notificationArea->readConfigString("MaxIconSize").toInt();
+int maxiconsize = notificationArea->maxIconSize;
 msg.icon = new QPixmap();
 
 if(!QPixmap(icon).isNull()) //Check if icon file is available, then check if it standart icon.

@@ -42,6 +42,10 @@ index = (unsigned int) 1;
 /////////////////////////////////////////////////////////////////////////////////
 void NotifyArea::ReReadConfig()
 {
+convertSpecialSymbols = this->readConfigString("ConvertSpecialSymbols").toInt();
+if(convertSpecialSymbols < 1 || convertSpecialSymbols > 2) convertSpecialSymbols = 1;
+
+maxIconSize = this->readConfigString("MaxIconSize").toInt();
 maxOpacity = this->readConfigString("Opacity").toFloat();
 if(maxOpacity<=0.1)
 	{

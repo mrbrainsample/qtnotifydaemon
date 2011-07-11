@@ -60,6 +60,9 @@ MaxIconSize = 80\n\
 #Positions of two widgets must differ\n\
 MessageWidgetPosition = 0\n\
 NotificationWidgetPosition = 2\n\
+\n\
+#Convert special symbols. \"&lt;\" to <, \"&gt;\" to >, \"&apos\"; to ', \"&quot;\" to \", 1 = yes, 2 = no\n\
+ConvertSpecialSymbols = 1\n\
 ";
 	fprintf(f,"%s",s);
 	fclose(f);

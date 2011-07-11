@@ -56,7 +56,9 @@ unsigned int index;
 char *config;
 bool debugMode;
 
+int convertSpecialSymbols;
 float maxOpacity;
+int maxIconSize;
 QString widgetStyle;
 QString UrgencyTag[4];
 
