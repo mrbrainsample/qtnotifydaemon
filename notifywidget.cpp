@@ -34,7 +34,7 @@
 
 
 
-NotifyWidget::NotifyWidget(const char *name, std::vector<Message> *msg, NotifyArea *p)
+NotifyWidget::NotifyWidget(const char *name, std::vector<Message*> *msg, NotifyArea *p)
 {
 strcpy(widgetName,name);
 messageStack = msg;
@@ -83,26 +83,26 @@ if(this->windowOpacity()>0 && this->isVisible())
 void NotifyWidget::appendMsg()
 {
 if(parent->debugMode) fprintf(stderr,"Appending messages\n");
-for(std::vector<Message>::iterator iter=messageStack->begin(); iter != messageStack->end(); iter++)	//Check if need to append
+for(std::vector<Message*>::iterator iter=messageStack->begin(); iter != messageStack->end(); iter++)	//Check if need to append
 	{
-	for(std::vector<Message>::iterator iter2=iter; iter2 != messageStack->end(); iter2++)
+	for(std::vector<Message*>::iterator iter2=iter; iter2 != messageStack->end(); iter2++)
 	{
-	if(iter->app_name == iter2->app_name && 
-	   iter->header == iter2->header && 
-	   !iter2->isComplete  && 
-	   (iter->hints["x-canonical-append"].toString() == "allow" || iter->hints["append"].toString() == "allow") && 
+	if((*iter)->app_name == (*iter2)->app_name && 
+	   (*iter)->header == (*iter2)->header && 
+	   !(*iter2)->isComplete  && 
 	   iter != iter2)
 		{
-		if(iter2->text.size()>0)iter->text += QString("<br>") + iter2->text;
-		iter->isComplete=false;
-		iter2->isComplete=true;
+		if((*iter2)->text.size()>0)(*iter)->text += QString("<br>") + (*iter2)->text;
+		(*iter)->isComplete=false;
+		(*iter2)->isComplete=true;
 		}
 	}
 	}
-for(std::vector<Message>::iterator iter=messageStack->begin(); iter != messageStack->end(); )	//Erase messages, that are already appended
+for(std::vector<Message*>::iterator iter=messageStack->begin(); iter != messageStack->end(); )	//Erase messages, that are already appended
 	{
-	if(iter->isComplete && iter != messageStack->begin())
+	if((*iter)->isComplete && iter != messageStack->begin())
 		{
+		delete *iter;
 		iter = messageStack->erase(iter);
 		}
 		else
@@ -117,9 +117,11 @@ void NotifyWidget::hideWidget()
 {
 if(parent->debugMode) fprintf(stderr,"Attempt to hide widget\n");
 this->timer->stop();
-emit NotificationClosed(messageStack->front().id,4);
-messageStack->erase(messageStack->begin());
+emit NotificationClosed((*messageStack->front()).id,4);
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
+
+delete messageStack->front();
+messageStack->erase(messageStack->begin());
 if(messageStack->size()>0)
 	{
 	this->showWidget();
@@ -143,9 +145,9 @@ if(messageStack->size()>0)
 
 
 	// Set icon
-	if(!messageStack->front().icon->isNull())
+	if(!(*messageStack->front()).icon->isNull())
 		{
-		icon->setPixmap(*messageStack->front().icon);
+		icon->setPixmap(*(*messageStack->front()).icon);
 		}
 		else
 		{
@@ -156,11 +158,11 @@ if(messageStack->size()>0)
 	//-----------------------------------------------------------------------------
 	myText="<html><table border=0><tr>"; //Create table on label
 	myText+="<td VALIGN=middle><div>";
-	myText+=parent->UrgencyTag[messageStack->front().urgency];
-	myText+=messageStack->front().header + QString("</div>");
-	if(messageStack->front().text.size()>0)
+	myText+=parent->UrgencyTag[(*messageStack->front()).urgency];
+	myText+=(*messageStack->front()).header + QString("</div>");
+	if((*messageStack->front()).text.size()>0)
 		{
-		myText += messageStack->front().text;
+		myText += (*messageStack->front()).text;
 		}
 	
 	myText+="</td></tr></table>"; // End of table
@@ -187,12 +189,12 @@ if(messageStack->size()>0)
 	this->move(pos.x(), pos.y());
 
 
-	messageStack->front().isComplete=true;
+	(*messageStack->front()).isComplete=true;
 
 	this->setVisible(false);
 	fadeTimer->stop();
 	this->setVisible(true);
-	this->timer->start(messageStack->front().timeout);
+	this->timer->start((*messageStack->front()).timeout);
 }			
 
 }
@@ -200,8 +202,11 @@ if(messageStack->size()>0)
 void NotifyWidget::checkIfNeedToShow()
 {
 if(parent->debugMode) fprintf(stderr,"Checking if need to show new notification\n");
-if( messageStack->size() > 1 ) this->appendMsg();
-if( !this->timer->isActive() || !messageStack->front().isComplete ) this->showWidget();
+if( messageStack->size() > 1 && 
+   ((*messageStack->front()).hints["x-canonical-append"].toString() == "allow" || 
+    (*messageStack->front()).hints["append"].toString() == "allow"))
+   this->appendMsg();
+if( !messageStack->empty() && (!this->timer->isActive() || !(*messageStack->front()).isComplete) ) this->showWidget();
 }
 //////////////////////////////////////////////
 

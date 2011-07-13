@@ -11,4 +11,4 @@ QT += dbus
 RESOURCES += images.qrc
 
 # Input
-SOURCES += main.cpp notifywidget.cpp dbus.cpp notifyarea.cpp
+SOURCES += main.cpp notifywidget.cpp dbus.cpp notifyarea.cpp message.cpp

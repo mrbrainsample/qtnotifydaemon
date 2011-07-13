@@ -91,19 +91,21 @@ return result;
 void NotifyArea::CloseNotification(unsigned id)
 {
 if(debugMode) fprintf(stderr,"Closing Notification with id=%d...\n",(int)id);
-for(std::vector<Message>::iterator iter=messageStack.begin(); iter != messageStack.end(); iter++)
+for(std::vector<Message*>::iterator iter=messageStack.begin(); iter != messageStack.end(); iter++)
 	{
-	if(iter->id == id)
+	if((*iter)->id == id)
 		{
+		delete *iter;
 		messageStack.erase(iter);
 		messageWidget->timer->stop();
 		messageWidget->checkIfNeedToShow();
 		}
 	}
-for(std::vector<Message>::iterator iter=notificationStack.begin(); iter != notificationStack.end(); iter++)
+for(std::vector<Message*>::iterator iter=notificationStack.begin(); iter != notificationStack.end(); iter++)
 	{
-	if(iter->id == id)
+	if((*iter)->id == id)
 		{
+		delete *iter;
 		notificationStack.erase(iter);
 		notificationWidget->timer->stop();
 		notificationWidget->checkIfNeedToShow();

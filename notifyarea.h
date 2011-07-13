@@ -20,25 +20,27 @@
 
 
 #include <QtCore>
+#include <QPixmap>
 #include <vector>
 #include <string.h>
 
 class NotifyWidget;
-struct Message
+class Message
 {
-	public:
-int timeout;
-int urgency;
-unsigned id;
-QPixmap *icon;
-QString app_name;
-QString text;
-QVariantMap hints;
-QString header;
-bool isComplete;
+public:
+	Message();
+	Message(const Message &t);
+	~Message();
+	int timeout;
+	int urgency;
+	unsigned id;
+	QPixmap *icon;
+	QString app_name;
+	QString text;
+	QVariantMap hints;
+	QString header;
+	bool isComplete;
 };
-
-
 
 class NotifyArea : public QObject
 {
@@ -66,8 +68,8 @@ public slots:
 void CloseNotification(unsigned);
 
 private: 
-std::vector<Message> messageStack;
-std::vector<Message> notificationStack;
+std::vector<Message*> messageStack;
+std::vector<Message*> notificationStack;
 
 signals:
 void NotificationClosed(unsigned,unsigned);

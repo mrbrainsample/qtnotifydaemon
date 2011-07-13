@@ -30,7 +30,7 @@
 
 class NotifyArea;
 
-struct Message;
+class Message;
 
 class QMyDBusAbstractAdaptor: public QDBusAbstractAdaptor
 {

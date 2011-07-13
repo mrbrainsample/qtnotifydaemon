@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QWidget>
 
-struct Message;
+class Message;
 class QClickLabel;
 class NotifyArea;
 
@@ -31,13 +31,13 @@ class NotifyWidget : public QLabel
 {
 	Q_OBJECT
 public:
-	NotifyWidget(const char*, std::vector<Message> *, NotifyArea *);
+	NotifyWidget(const char*, std::vector<Message*> *, NotifyArea *);
 	QTimer *timer;
 	QClickLabel *text;
 	QClickLabel *icon;
 	void checkIfNeedToShow();
 	void appendMsg(); //append msg's that can be appended
-	std::vector<Message> *messageStack;
+	std::vector<Message*> *messageStack;
 public slots:
 	void showWidget();
 	void hideWidget();

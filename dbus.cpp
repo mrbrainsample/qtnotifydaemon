@@ -25,9 +25,9 @@
 void QMyDBusAbstractAdaptor::CloseNotification(unsigned id)
 {
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search and close basic notifications by id...\n");
-for(std::vector<Message>::iterator idIter=notificationArea->messageWidget->messageStack->begin(); idIter != notificationArea->messageWidget->messageStack->end(); idIter++)
+for(std::vector<Message*>::iterator idIter=notificationArea->messageWidget->messageStack->begin(); idIter != notificationArea->messageWidget->messageStack->end(); idIter++)
 	{
-	if(idIter->id == id && id > 0)
+	if((*idIter)->id == id && id > 0)
 		{
 		if(idIter == notificationArea->messageWidget->messageStack->begin())
 			{
@@ -35,6 +35,7 @@ for(std::vector<Message>::iterator idIter=notificationArea->messageWidget->messa
 			}
 			else
 			{
+			delete *idIter;
 			notificationArea->messageWidget->messageStack->erase(idIter);
 			emit NotificationClosed(id,4);
 			}
@@ -43,9 +44,9 @@ for(std::vector<Message>::iterator idIter=notificationArea->messageWidget->messa
 	}
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search and close private-synchronous notifications by id...\n");
 
-for(std::vector<Message>::iterator idIter=notificationArea->notificationWidget->messageStack->begin(); idIter != notificationArea->notificationWidget->messageStack->end(); idIter++)
+for(std::vector<Message*>::iterator idIter=notificationArea->notificationWidget->messageStack->begin(); idIter != notificationArea->notificationWidget->messageStack->end(); idIter++)
 	{
-	if(idIter->id == id && id > 0)
+	if((*idIter)->id == id && id > 0)
 		{
 		if(idIter == notificationArea->notificationWidget->messageStack->begin())
 			{
@@ -53,6 +54,7 @@ for(std::vector<Message>::iterator idIter=notificationArea->notificationWidget->
 			}
 			else
 			{
+			delete *idIter;
 			notificationArea->notificationWidget->messageStack->erase(idIter);
 			emit NotificationClosed(id,4);
 			}
@@ -98,7 +100,8 @@ QPixmap QMyDBusAbstractAdaptor::getPixmapFromHint(QVariant argument)
 unsigned QMyDBusAbstractAdaptor::Notify(QString app_name, unsigned id, QString icon, QString summary, QString body, QStringList actions, QVariantMap hints, int timeout)
 {
 if(notificationArea->debugMode) fprintf(stderr," *** Receiving new notification...\n");
-Message msg;
+Message *msg;
+msg = new Message();
 bool ok, foundSynchronous=false, foundById=false;
 
 if(notificationArea->convertSpecialSymbols == 1)
@@ -110,68 +113,66 @@ if(notificationArea->convertSpecialSymbols == 1)
 	}
 body.replace("\n",     "<br>",  Qt::CaseSensitive);
 
-msg.app_name = app_name;
-msg.isComplete = false;
-msg.hints = hints;
+msg->app_name = app_name;
+msg->hints = hints;
 if(timeout>0)
 	{
-		msg.timeout = timeout;
+		msg->timeout = timeout;
 	}
-	else
-	{
-		msg.timeout = 3000;
-	}
-	if(id == 0) // Calculate new id. If old id==0 --> new id = current+1, if old id!=0 --> new id = old id
+if(id == 0) // Calculate new id. If old id==0 --> new id = current+1, if old id!=0 --> new id = old id
 	{
 		notificationArea->index = notificationArea->index + 1;
 		if(notificationArea->index > MAX_NOTIFICATION_ID)	notificationArea->index = (unsigned int)1;
 		id = notificationArea->index;
 	}
-msg.id = id;
+msg->id = id;
 
 //		----------------------------------------------------------------------------	
-	msg.urgency=hints["urgency"].toInt(&ok)+1;
-	if(!ok) msg.urgency = 1;
+msg->urgency=hints["urgency"].toInt(&ok)+1;
+if(!ok) msg->urgency = 1;
 
 //		-----------------------------------------------------------------------------
 //							Set icon
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to set icon...\n");
 int maxiconsize = notificationArea->maxIconSize;
-msg.icon = new QPixmap();
 
 if(!QPixmap(icon).isNull()) //Check if icon file is available, then check if it standart icon.
 	{
-	*msg.icon = QIcon(icon).pixmap(maxiconsize);
+		msg->icon = new QPixmap(QIcon(icon).pixmap(maxiconsize));
 	}
 	else if(!hints["icon_data"].isNull())
-		{
-		*msg.icon = getPixmapFromHint(hints["icon_data"]);
-		}
+	{
+		msg->icon = new QPixmap(getPixmapFromHint(hints["icon_data"]));
+	}
 	else if(!hints["image_data"].isNull())
-		{
-		*msg.icon = getPixmapFromHint(hints["image_data"]);
-		}
+	{
+		msg->icon = new QPixmap(getPixmapFromHint(hints["image_data"]));
+	}
 	else if(!QIcon::fromTheme(icon).pixmap(maxiconsize).isNull())
-		{
-		*msg.icon = QIcon::fromTheme(icon).pixmap(maxiconsize);
-		}
+	{
+		msg->icon = new QPixmap(QIcon::fromTheme(icon).pixmap(maxiconsize));
+	}
 	else if(QFile::exists(":/images/"+icon+".svg") && !QIcon(":/images/"+icon+".svg").isNull())
-		{
-		*msg.icon = QIcon(":/images/"+icon+".svg").pixmap(maxiconsize);
-		}
+	{
+		msg->icon = new QPixmap(QIcon(":/images/"+icon+".svg").pixmap(maxiconsize));
+	}
+	else
+	{
+		msg->icon = new QPixmap();
+	}
 
 if(notificationArea->debugMode) fprintf(stderr," *** Icon set successfully.\n");
 
 			
-msg.header = summary;
-msg.text = body;
+msg->header = summary;
+msg->text = body;
 
 //		-----------------------------------------------------------------------------
 //								Search by ID
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search basic notifications by id...\n");
-for(std::vector<Message>::iterator iter=notificationArea->messageWidget->messageStack->begin(); iter != notificationArea->messageWidget->messageStack->end(); iter++)
+for(std::vector<Message*>::iterator iter=notificationArea->messageWidget->messageStack->begin(); iter != notificationArea->messageWidget->messageStack->end(); iter++)
 	{
-	if(iter->id == id && id > 0)
+	if((*iter)->id == id && id > 0)
 		{
 		*iter=msg;
 		foundById=true;
@@ -181,9 +182,9 @@ for(std::vector<Message>::iterator iter=notificationArea->messageWidget->message
 if(notificationArea->debugMode) fprintf(stderr," *** ... done!\n");
 if(notificationArea->debugMode) fprintf(stderr," *** Attempt to search private-synchronous notifications by id...\n");
 
-for(std::vector<Message>::iterator iter=notificationArea->notificationWidget->messageStack->begin(); iter != notificationArea->notificationWidget->messageStack->end(); iter++)
+for(std::vector<Message*>::iterator iter=notificationArea->notificationWidget->messageStack->begin(); iter != notificationArea->notificationWidget->messageStack->end(); iter++)
 	{
-	if(iter->id == id && id > 0)
+	if((*iter)->id == id && id > 0)
 		{
 		*iter=msg;
 		foundById=true;
@@ -200,13 +201,13 @@ if(notificationArea->debugMode) fprintf(stderr," *** Take care of private-synchr
 		
 if(hints["x-canonical-private-synchronous"].toString().size()>0)
 	{
-	msg.header = hints["x-canonical-private-synchronous"].toString()+": "+QString::number(hints["value"].toInt());
-	for(std::vector<Message>::iterator iter=notificationArea->notificationWidget->messageStack->begin(); iter != notificationArea->notificationWidget->messageStack->end(); iter++)
+	msg->header = hints["x-canonical-private-synchronous"].toString()+": "+QString::number(hints["value"].toInt());
+	for(std::vector<Message*>::iterator iter=notificationArea->notificationWidget->messageStack->begin(); iter != notificationArea->notificationWidget->messageStack->end(); iter++)
 		{
-		if(iter->hints["x-canonical-private-synchronous"] == hints["x-canonical-private-synchronous"])
+		if((*iter)->hints["x-canonical-private-synchronous"] == hints["x-canonical-private-synchronous"])
 			{
-			iter->header = msg.header;
-			iter->isComplete=false;
+			(*iter)->header = msg->header;
+			(*iter)->isComplete=false;
 			foundSynchronous=true;
 			break;
 			}
@@ -236,10 +237,11 @@ if(!foundSynchronous)
 
 if(notificationArea->debugMode) fprintf(stderr," *** ... done!\n");
 
+if(notificationArea->debugMode) fprintf(stderr," *** Notification received.\n");
 notificationArea->messageWidget->checkIfNeedToShow();
 notificationArea->notificationWidget->checkIfNeedToShow();
-if(notificationArea->debugMode) fprintf(stderr," *** Notification received.\n");
-return msg.id;
+
+return id;
 }
 
 
