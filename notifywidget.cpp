@@ -117,7 +117,7 @@ void NotifyWidget::hideWidget()
 {
 if(parent->debugMode) fprintf(stderr,"Attempt to hide widget\n");
 this->timer->stop();
-parent->adaptor->emitNotificationClosedSignal((*messageStack->front()).id,4);
+emit NotificationClosed((*messageStack->front()).id,4);
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
 
 delete messageStack->front();

@@ -25,6 +25,7 @@
 #include "dbus.h"
 #include "notifywidget.h"
 #include "notifyarea.h"
+#include <QDBusMessage>
 
 bool debugMode=false;
 void catchSighup(int);
@@ -113,25 +114,24 @@ if(j<0)
 
 QApplication app(argc,argv);
 area = new NotifyArea(config, debugMode);
-QMyDBusAbstractAdaptor adaptor(&app, area);
+QMyDBusAbstractAdaptor *adaptor = new QMyDBusAbstractAdaptor(&app,area);
 QDBusConnection connection = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "org.freedesktop.Notifications");
 if (connection.isConnected()) printf("Connection established\n");
 if (!connection.registerService("org.freedesktop.Notifications")) {
 	printf("Cant register service. Is another instance of this application running?\n");
 	return 1;
 	}
-if (!connection.registerObject("/org/freedesktop/Notifications", &adaptor, QDBusConnection::ExportAllContents)) {
+if (!connection.registerObject("/org/freedesktop/Notifications", &app, QDBusConnection::ExportAdaptors)) {
 	printf("Cant register object\n");
 	return 1;
 	}
-
 
 struct sigaction *sa;
 sa=new struct sigaction;
 sa->sa_handler = catchSighup;
 sigaction(SIGHUP, sa, 0);
 
-adaptor.Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000);
+adaptor->Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000);
 
 app.exec();
 return 0;

@@ -36,11 +36,11 @@ class QMyDBusAbstractAdaptor: public QDBusAbstractAdaptor
 {
 	Q_OBJECT
 	Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Notifications")
-private:
-	NotifyArea *notificationArea;
-
 public:
+
 	QMyDBusAbstractAdaptor(QApplication *application, NotifyArea *area);
+
+public slots:
 
 	Q_INVOKABLE QStringList GetCapabilities();
 
@@ -52,7 +52,8 @@ public:
 
 	Q_INVOKABLE void CloseNotification(unsigned id);
 
-	void emitNotificationClosedSignal(unsigned,unsigned);
+private:
+	NotifyArea *notificationArea;
 
 signals:
 
