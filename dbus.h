@@ -52,6 +52,8 @@ public:
 
 	Q_INVOKABLE void CloseNotification(unsigned id);
 
+	void emitNotificationClosedSignal(unsigned,unsigned);
+
 signals:
 
 	Q_INVOKABLE void NotificationClosed(unsigned id, unsigned reason);

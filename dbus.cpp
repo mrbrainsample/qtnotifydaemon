@@ -66,12 +66,15 @@ for(std::vector<Message*>::iterator idIter=notificationArea->notificationWidget-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 QMyDBusAbstractAdaptor::QMyDBusAbstractAdaptor(QApplication *application, NotifyArea *Area) : QDBusAbstractAdaptor(application)
-	{
+{
 	notificationArea = Area;
-	connect(notificationArea->messageWidget, SIGNAL(NotificationClosed(unsigned,unsigned)), this, SIGNAL(NotificationClosed(unsigned,unsigned)));
-	connect(notificationArea->notificationWidget, SIGNAL(NotificationClosed(unsigned,unsigned)), this, SIGNAL(NotificationClosed(unsigned,unsigned)));
+	Area->adaptor = this;
+}
 
-	}
+void QMyDBusAbstractAdaptor::emitNotificationClosedSignal(unsigned id,unsigned reason)
+{
+	emit NotificationClosed(id,reason);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

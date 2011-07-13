@@ -25,6 +25,8 @@
 #include <string.h>
 
 class NotifyWidget;
+class QMyDBusAbstractAdaptor;
+
 class Message
 {
 public:
@@ -63,6 +65,7 @@ float maxOpacity;
 int maxIconSize;
 QString widgetStyle;
 QString UrgencyTag[4];
+QMyDBusAbstractAdaptor *adaptor;
 
 public slots:
 void CloseNotification(unsigned);
