@@ -85,7 +85,7 @@ for(int i=0;i<argc;i++)
 	{
 	if(strcmp(argv[i],"--help")==0)
 		{
-		printf("qtnotifydaemon v1.0.8\nUsage: %s [OPTIONS]\n",argv[0]);
+		printf("qtnotifydaemon v1.0.9\nUsage: %s [OPTIONS]\n",argv[0]);
 		printf("Option:\n\t-c	-	config filename\n\t--debug	-	debug mode\n");	
 		return 0;
 		}
