@@ -27,21 +27,9 @@
 #include "notifyarea.h"
 #include <QDBusMessage>
 
-bool debugMode=false;
-void catchSighup(int);
-NotifyArea *area;
 
-void createConfigIfNotExists(char *config, char *homedir)
-{
-FILE *f;
-char configdir[255];
-strcpy(configdir,homedir);
-strcat(configdir,"/.config/qtnotifydaemon/");
-mkdir(configdir, S_IREAD | S_IWRITE | S_IEXEC | S_IRGRP | S_IROTH);
-if(!fopen(config,"r"))
-	{
-	f=fopen(config,"w");
-	char s[1024]="#Widget style\n\
+char configcontent[1024]="\
+#Widget style\n\
 GeneralStyle = margin: 0px; background: black; border: 3px solid white; color: lime; border-radius: 15px; font-size: 14px;\n\
 \n\
 #Style of notifications with low urgency\n\
@@ -65,7 +53,23 @@ NotificationWidgetPosition = 2\n\
 #Convert special symbols. \"&lt;\" to <, \"&gt;\" to >, \"&apos\"; to ', \"&quot;\" to \", 1 = yes, 2 = no\n\
 ConvertSpecialSymbols = 1\n\
 ";
-	fprintf(f,"%s",s);
+
+
+bool debugMode=false;
+void catchSighup(int);
+NotifyArea *area;
+
+void createConfigIfNotExists(char *config, char *homedir)
+{
+FILE *f;
+char configdir[255];
+strcpy(configdir,homedir);
+strcat(configdir,"/.config/qtnotifydaemon/");
+mkdir(configdir, S_IREAD | S_IWRITE | S_IEXEC | S_IRGRP | S_IROTH);
+if(!fopen(config,"r"))
+	{
+	f=fopen(config,"w");
+	fprintf(f,"%s",configcontent);
 	fclose(f);
 	}
 }

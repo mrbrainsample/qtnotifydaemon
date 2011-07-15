@@ -186,7 +186,11 @@ if(messageStack->size()>0)
 	this->setMask(pixmap.mask());
 	
 	QPoint pos = parent->getWidgetPosition(this->widgetName);
-	this->move(pos.x(), pos.y());
+	int x,y;
+	x=pos.x()-this->childrenRect().size().width()-10;
+	y=pos.y()-this->childrenRect().size().height()-10;
+	if(x<0)x=0; if(y<0)y=0;
+	this->move(x,y);
 
 
 	(*messageStack->front()).isComplete=true;

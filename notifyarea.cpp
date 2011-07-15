@@ -79,6 +79,7 @@ if(!file.fail())
 			result=tmp.substr(tmp.find("=")+1).c_str();
 			}
 		}
+	file.close();
 	}
 	else
 	{
@@ -128,10 +129,11 @@ if(debugMode) fprintf(stderr,"Got desktop geometry.\n");
 
 int position = this->readConfigString(QString(widgetName)+"Position").toInt();
 if(debugMode) fprintf(stderr,"Got widget position from config.\n");
-
 switch (position)
 	{
-	case 0:	p = desktopGeometry.bottomLeft();
+	case 0:	
+		p = desktopGeometry.bottomLeft();
+		break;
 	case 1:
 		p = desktopGeometry.bottomRight();
 		break;
@@ -144,6 +146,8 @@ switch (position)
 	default:
 		p = desktopGeometry.bottomLeft();	
 	}
+delete desktop;
+desktop = NULL;
 if(debugMode) fprintf(stderr,"Returning widget coordinates.\n");
 return p;
 }
