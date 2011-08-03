@@ -135,7 +135,7 @@ sa=new struct sigaction;
 sa->sa_handler = catchSighup;
 sigaction(SIGHUP, sa, 0);
 
-adaptor->Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000);
+if(debugMode) adaptor->Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000);
 
 app.exec();
 return 0;
