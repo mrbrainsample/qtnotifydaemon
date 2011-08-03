@@ -17,7 +17,7 @@
  */
 
 
-
+#include <QToolTip> //alex
 #include <QDesktopWidget>
 #include <fstream>
 #include "notifyarea.h"
@@ -56,6 +56,16 @@ if(widgetStyle=="")
 	{
 	widgetStyle = "margin: 0px; background: black; border: 3px solid white; color: lime; border-radius: 15px;";
 	}
+//alex:
+if (widgetStyle.contains("qtfg") || widgetStyle.contains("qtbg"))
+{
+	QPalette pal = QToolTip::palette();
+	QColor bg = pal.color(QPalette::ToolTipBase);
+	QColor fg = pal.color(QPalette::ToolTipText);
+	widgetStyle.replace("qtbg",bg.name());
+	widgetStyle.replace("qtfg",fg.name());
+}
+	
 for(int i=1;i<4;i++) UrgencyTag[i] = this->readConfigString("UrgencyTag"+QString::number(i));
 
 }

@@ -27,10 +27,10 @@
 #include "notifyarea.h"
 #include <QDBusMessage>
 
-
+//alex: use qtbg, qtfg, border width (1 instead of 3) and other positions (bottom and top right) by default
 char configcontent[1024]="\
 #Widget style\n\
-GeneralStyle = margin: 0px; background: black; border: 3px solid white; color: lime; border-radius: 15px; font-size: 14px;\n\
+GeneralStyle = margin: 0px; background: qtbg; border: 1px solid qtfg; color: qtfg; border-radius: 15px; font-size: 14px;\n\
 \n\
 #Style of notifications with low urgency\n\
 UrgencyTag1 = <b>\n\
@@ -45,10 +45,10 @@ UrgencyTag3 = <b><u><font color=red>\n\
 Opacity = 0.8\n\
 MaxIconSize = 80\n\
 \n\
-#Widgets position: 0 - bottomRight, 1 - bottomRight, 2 - topLeft, 3 - topRight\n\
+#Widgets position: 0 - bottomLeft, 1 - bottomRight, 2 - topLeft, 3 - topRight\n\
 #Positions of two widgets must differ\n\
-MessageWidgetPosition = 0\n\
-NotificationWidgetPosition = 2\n\
+MessageWidgetPosition = 1\n\
+NotificationWidgetPosition = 3\n\
 \n\
 #Convert special symbols. \"&lt;\" to <, \"&gt;\" to >, \"&apos\"; to ', \"&quot;\" to \", 1 = yes, 2 = no\n\
 ConvertSpecialSymbols = 1\n\
