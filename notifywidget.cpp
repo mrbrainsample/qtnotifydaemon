@@ -45,6 +45,8 @@ timer = new QTimer(this);
 icon = new QClickLabel(this);
 fadeTimer = new QTimer();
 
+icon->setScaledContents(true);
+
 connect(timer, SIGNAL(timeout()), this, SLOT(hideWidget()));
 connect(fadeTimer, SIGNAL(timeout()), this, SLOT(fadeWidget()));
 connect(text, SIGNAL(clicked()), this,SLOT(hideWidget()));
@@ -154,7 +156,7 @@ if(messageStack->size()>0)
 		icon->setPixmap(QPixmap());
 		}
 	
-	icon->adjustSize();
+	icon->resize(parent->maxIconSize,parent->maxIconSize);
 	//-----------------------------------------------------------------------------
 	myText="<html><table border=0><tr>"; //Create table on label
 	myText+="<td VALIGN=middle><div>";
