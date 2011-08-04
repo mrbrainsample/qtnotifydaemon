@@ -51,7 +51,7 @@ public:
 
 NotifyArea(char*, bool);
 QString readConfigString(QString);
-QPoint getWidgetPosition(char *);
+QPoint getWidgetPosition(char *, QSize);
 void ReReadConfig();
 
 NotifyWidget *messageWidget;

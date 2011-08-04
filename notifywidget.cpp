@@ -147,16 +147,10 @@ if(messageStack->size()>0)
 
 
 	// Set icon
-	if(!(*messageStack->front()).icon->isNull())
-		{
-		icon->setPixmap(*(*messageStack->front()).icon);
-		}
-		else
-		{
-		icon->setPixmap(QPixmap());
-		}
-	
-	icon->resize(parent->maxIconSize,parent->maxIconSize);
+	icon->setPixmap(*(*messageStack->front()).icon);
+
+	icon->resize(std::min(parent->maxIconSize,(*messageStack->front()).icon->width()),
+				 std::min(parent->maxIconSize,(*messageStack->front()).icon->height()));
 	//-----------------------------------------------------------------------------
 	myText="<html><table border=0><tr>"; //Create table on label
 	myText+="<td VALIGN=middle><div>";
@@ -187,7 +181,7 @@ if(messageStack->size()>0)
 	this->render(&pixmap,QPoint(),QRegion(), DrawChildren | IgnoreMask);
 	this->setMask(pixmap.mask());
 	
-	QPoint pos = parent->getWidgetPosition(this->widgetName);
+	QPoint pos = parent->getWidgetPosition(this->widgetName, this->size());
 	int x,y;
 	x=pos.x()-this->childrenRect().size().width()-10;
 	y=pos.y()-this->childrenRect().size().height()-10;

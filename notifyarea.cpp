@@ -96,7 +96,7 @@ if(!file.fail())
 	fprintf(stderr,"Cant open config %s!",config);
 	}
 if(debugMode) fprintf(stderr,"Returning config string: '%s' = '%s'.\n", param.toStdString().c_str(), result.toStdString().c_str());
-return result;
+return result.trimmed();
 }
 
 void NotifyArea::CloseNotification(unsigned id)
@@ -125,7 +125,10 @@ for(std::vector<Message*>::iterator iter=notificationStack.begin(); iter != noti
 if(debugMode) fprintf(stderr,"Notification %d closed.\n",(int)id);
 }
 
-QPoint NotifyArea::getWidgetPosition(char *widgetName)
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+QPoint NotifyArea::getWidgetPosition(char *widgetName, QSize widgetSize)
 {
 QPoint p;
 
@@ -137,25 +140,46 @@ QRect desktopGeometry = desktop->availableGeometry();
 
 if(debugMode) fprintf(stderr,"Got desktop geometry.\n");
 
-int position = this->readConfigString(QString(widgetName)+"Position").toInt();
+std::string position = this->readConfigString(QString(widgetName)+"Position").toStdString();
 if(debugMode) fprintf(stderr,"Got widget position from config.\n");
-switch (position)
-	{
-	case 0:	
+
+p = desktopGeometry.bottomLeft();	
+	if(position=="0" || position=="BL")
 		p = desktopGeometry.bottomLeft();
-		break;
-	case 1:
+	if(position=="1" || position=="BR")
 		p = desktopGeometry.bottomRight();
-		break;
-	case 2:
+	if(position=="2" || position=="TR")
 		p = desktopGeometry.topRight();
-		break;
-	case 3:
+	if(position=="3" || position=="TL")
 		p = desktopGeometry.topLeft();
-		break;
-	default:
-		p = desktopGeometry.bottomLeft();	
-	}
+	if(position=="4" || position=="C")
+		{
+		p = desktopGeometry.bottomRight();
+		p.setX(p.x()/2 + widgetSize.width()/2);
+		p.setY(p.y()/2 + widgetSize.height()/2);
+		}
+	if(position=="5" || position=="RC")
+		{
+		p = desktopGeometry.bottomRight();
+		p.setY(p.y()/2 + widgetSize.height()/2);
+		}
+	if(position=="6" || position=="TC")
+		{
+		p = desktopGeometry.topRight();
+		p.setX(p.x()/2 + widgetSize.width()/2);
+		}
+	if(position=="7" || position=="LC")
+		{
+		p = desktopGeometry.bottomLeft();
+		p.setY(p.y()/2 + widgetSize.height()/2);
+		}
+	if(position=="8" || position=="BC")
+		{
+		p = desktopGeometry.bottomRight();
+		p.setX(p.x()/2 + widgetSize.width()/2);
+		}
+
+
 delete desktop;
 desktop = NULL;
 if(debugMode) fprintf(stderr,"Returning widget coordinates.\n");

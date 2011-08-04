@@ -109,12 +109,17 @@ for(int i=0;i<argc;i++)
 int j=fork();
 if(j<0)
 	{
-	fprintf(stderr,"Fork error.");
+	fprintf(stderr,"Fork error.\n");
 	}
 	else if(j>0)
 	{
 	return 0;
 	}
+struct sigaction *sa;
+sa=new struct sigaction;
+sa->sa_handler = catchSighup;
+sigaction(SIGHUP, sa, NULL);
+
 
 QApplication app(argc,argv);
 area = new NotifyArea(config, debugMode);
@@ -129,11 +134,6 @@ if (!connection.registerObject("/org/freedesktop/Notifications", &app, QDBusConn
 	printf("Cant register object\n");
 	return 1;
 	}
-
-struct sigaction *sa;
-sa=new struct sigaction;
-sa->sa_handler = catchSighup;
-sigaction(SIGHUP, sa, 0);
 
 if(debugMode) adaptor->Notify("qtnotifydaemon", 0, "", "qtnotifydaemon started", "Daemon started successfully", QStringList(), QVariantMap(), 3000);
 
