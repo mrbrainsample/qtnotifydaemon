@@ -140,44 +140,45 @@ QRect desktopGeometry = desktop->availableGeometry();
 
 if(debugMode) fprintf(stderr,"Got desktop geometry.\n");
 
-std::string position = this->readConfigString(QString(widgetName)+"Position").toStdString();
+QString position = this->readConfigString(QString(widgetName)+"Position");
 if(debugMode) fprintf(stderr,"Got widget position from config.\n");
 
-p = desktopGeometry.bottomLeft();	
 	if(position=="0" || position=="BL")
 		p = desktopGeometry.bottomLeft();
-	if(position=="1" || position=="BR")
+	else if(position=="1" || position=="BR")
 		p = desktopGeometry.bottomRight();
-	if(position=="2" || position=="TR")
+	else if(position=="2" || position=="TR")
 		p = desktopGeometry.topRight();
-	if(position=="3" || position=="TL")
+	else if(position=="3" || position=="TL")
 		p = desktopGeometry.topLeft();
-	if(position=="4" || position=="C")
+	else if(position=="4" || position=="C")
 		{
 		p = desktopGeometry.bottomRight();
 		p.setX(p.x()/2 + widgetSize.width()/2);
 		p.setY(p.y()/2 + widgetSize.height()/2);
 		}
-	if(position=="5" || position=="RC")
+	else if(position=="5" || position=="RC")
 		{
 		p = desktopGeometry.bottomRight();
 		p.setY(p.y()/2 + widgetSize.height()/2);
 		}
-	if(position=="6" || position=="TC")
+	else if(position=="6" || position=="TC")
 		{
 		p = desktopGeometry.topRight();
 		p.setX(p.x()/2 + widgetSize.width()/2);
 		}
-	if(position=="7" || position=="LC")
+	else if(position=="7" || position=="LC")
 		{
 		p = desktopGeometry.bottomLeft();
 		p.setY(p.y()/2 + widgetSize.height()/2);
 		}
-	if(position=="8" || position=="BC")
+	else if(position=="8" || position=="BC")
 		{
 		p = desktopGeometry.bottomRight();
 		p.setX(p.x()/2 + widgetSize.width()/2);
 		}
+	else
+		p = desktopGeometry.bottomRight();	
 
 
 delete desktop;
