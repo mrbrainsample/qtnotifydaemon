@@ -209,7 +209,8 @@ if(messageStack->size()>0)
 		{
 		this->actionButton[i/2]->move(x,y);
 		this->actionButton[i/2]->setText((*messageStack->front()).action.at(i+1));
-		this->actionButton[i/2]->resize(text->width(),this->actionButton[i/2]->height());
+
+		this->actionButton[i/2]->resize(std::max(this->text->width(),100),this->actionButton[i/2]->height());
 		connect(this->actionButton[i/2], SIGNAL(clicked()), signalMap, SLOT(map()));
 		signalMap->setMapping(this->actionButton[i/2], (*messageStack->front()).action.at(i));
 		y+=this->actionButton[i/2]->height()+5;
