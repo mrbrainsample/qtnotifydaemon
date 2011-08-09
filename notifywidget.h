@@ -37,7 +37,7 @@ public:
 	QTimer *timer;
 	QClickLabel *text;
 	QClickLabel *icon;
-	QPushButton *actionButton[32];
+	QPushButton *actionButton[10];
 	void checkIfNeedToShow();
 	void appendMsg(); //append msg's that can be appended
 	std::vector<Message*> *messageStack;

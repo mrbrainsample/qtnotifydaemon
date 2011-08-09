@@ -46,6 +46,11 @@ icon = new QClickLabel(this);
 fadeTimer = new QTimer();
 
 icon->setScaledContents(true);
+for(int i=0;i<10;i++)
+	{
+	actionButton[i] = new QPushButton(this);
+	actionButton[i]->setVisible(false);
+	}
 
 signalMap = new QSignalMapper(this);
 signalMap->setMapping(timer, 1);
@@ -138,16 +143,12 @@ emit NotificationClosed((*messageStack->front()).id, reason);
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
 
 delete messageStack->front();
-for(int i=0;i<32;i++)
+for(int i=0;i<10;i++)
 	{
-	if(this->actionButton[i] != NULL)
+	signalMap->removeMappings(this->actionButton[i]);
+	if(this->actionButton[i]->isVisible())
 		{
-		delete this->actionButton[i];
-		this->actionButton[i] = NULL;
-		}
-		else
-		{
-		break;
+		this->actionButton[i]->setVisible(false);
 		}
 	}
 
@@ -204,9 +205,8 @@ if(messageStack->size()>0)
 
 	int x=text->pos().x(), y=text->pos().y()+text->height()+5;
 
-	for(int i=0; i < (*messageStack->front()).action.size() && i < 32; i+=2) //Construct action buttons. Each even element is action key, each odd element is action text.
+	for(int i=0; i < (*messageStack->front()).action.size() && i < 10; i+=2) //Construct action buttons. Each even element is action key, each odd element is action text.
 		{
-		this->actionButton[i/2] = new QPushButton(this);
 		this->actionButton[i/2]->move(x,y);
 		this->actionButton[i/2]->setText((*messageStack->front()).action.at(i+1));
 		this->actionButton[i/2]->resize(text->width(),this->actionButton[i/2]->height());
