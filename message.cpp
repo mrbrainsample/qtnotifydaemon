@@ -16,6 +16,7 @@ Message::Message(const Message &t)
 {
 icon = new QPixmap;
 icon = t.icon;
+action = t.action;
 timeout = t.timeout;
 urgency = t.urgency;
 app_name = t.app_name;

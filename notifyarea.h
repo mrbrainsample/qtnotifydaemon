@@ -40,6 +40,7 @@ public:
 	QString app_name;
 	QString text;
 	QVariantMap hints;
+	QStringList action;
 	QString header;
 	bool isComplete;
 };

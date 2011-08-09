@@ -22,6 +22,8 @@
 #include <QTimer>
 #include <QLabel>
 #include <QWidget>
+#include <QPushButton>
+#include <QSignalMapper>
 
 class Message;
 class QClickLabel;
@@ -35,13 +37,17 @@ public:
 	QTimer *timer;
 	QClickLabel *text;
 	QClickLabel *icon;
+	QPushButton *actionButton[32];
 	void checkIfNeedToShow();
 	void appendMsg(); //append msg's that can be appended
 	std::vector<Message*> *messageStack;
+	QSignalMapper *signalMap;
+
 public slots:
 	void showWidget();
 	void hideWidget(int reason = 4);
 	void fadeWidget();
+	void emitActionInvoked(QString);
 signals:
 	void NotificationClosed(unsigned,unsigned);
 	void ActionInvoked(unsigned int, QString);

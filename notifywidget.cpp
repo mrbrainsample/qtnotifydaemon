@@ -47,7 +47,6 @@ fadeTimer = new QTimer();
 
 icon->setScaledContents(true);
 
-QSignalMapper *signalMap;
 signalMap = new QSignalMapper(this);
 signalMap->setMapping(timer, 1);
 signalMap->setMapping(text, 2);
@@ -60,6 +59,7 @@ connect(timer, SIGNAL(timeout()), signalMap, SLOT(map()));
 connect(text, SIGNAL(clicked()), signalMap,SLOT(map()));
 connect(icon, SIGNAL(clicked()), signalMap,SLOT(map()));
 connect(signalMap, SIGNAL(mapped(int)), this, SLOT(hideWidget(int)));
+connect(signalMap, SIGNAL(mapped(QString)), this, SLOT(emitActionInvoked(QString)));
 
 this->setWindowFlags(Qt::SplashScreen | Qt::WindowStaysOnTopHint);
 text->setAttribute(Qt::WA_NoSystemBackground);
@@ -138,6 +138,19 @@ emit NotificationClosed((*messageStack->front()).id, reason);
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
 
 delete messageStack->front();
+for(int i=0;i<32;i++)
+	{
+	if(this->actionButton[i] != NULL)
+		{
+		delete this->actionButton[i];
+		this->actionButton[i] = NULL;
+		}
+		else
+		{
+		break;
+		}
+	}
+
 messageStack->erase(messageStack->begin());
 if(messageStack->size()>0)
 	{
@@ -189,7 +202,21 @@ if(messageStack->size()>0)
 	icon->move(10, 5);
 	text->move(icon->width()+icon->pos().x()+10,5);
 
-	this->resize(this->childrenRect().size().width()+10,this->childrenRect().size().height()+10);
+	int x=text->pos().x(), y=text->pos().y()+text->height()+5;
+
+	for(int i=0; i < (*messageStack->front()).action.size() && i < 32; i+=2) //Construct action buttons. Each even element is action key, each odd element is action text.
+		{
+		this->actionButton[i/2] = new QPushButton(this);
+		this->actionButton[i/2]->move(x,y);
+		this->actionButton[i/2]->setText((*messageStack->front()).action.at(i+1));
+		this->actionButton[i/2]->resize(text->width(),this->actionButton[i/2]->height());
+		connect(this->actionButton[i/2], SIGNAL(clicked()), signalMap, SLOT(map()));
+		signalMap->setMapping(this->actionButton[i/2], (*messageStack->front()).action.at(i));
+		y+=this->actionButton[i/2]->height()+5;
+		this->actionButton[i/2]->setVisible(true);
+		}
+
+	this->resize(this->childrenRect().size().width()+20,this->childrenRect().size().height()+10);
 
 	QPixmap pixmap(this->size()); // Cutting QWidget corners
 	pixmap.fill(Qt::transparent);
@@ -197,7 +224,6 @@ if(messageStack->size()>0)
 	this->setMask(pixmap.mask());
 	
 	QPoint pos = parent->getWidgetPosition(this->widgetName, this->size());
-	int x,y;
 	x=pos.x()-this->childrenRect().size().width()-10;
 	y=pos.y()-this->childrenRect().size().height()-10;
 	if(x<0)x=0; if(y<0)y=0;
@@ -226,4 +252,8 @@ if( !messageStack->empty() && (!this->timer->isActive() || !(*messageStack->fron
 //////////////////////////////////////////////
 
 
-
+void NotifyWidget::emitActionInvoked(QString actionId)
+{
+emit ActionInvoked((*messageStack->front()).id, actionId);
+this->hideWidget(4);
+}

@@ -120,6 +120,8 @@ body.replace("\n",     "<br>",  Qt::CaseSensitive);
 
 msg->app_name = app_name;
 msg->hints = hints;
+msg->action = actions;
+
 if(timeout>0)
 	{
 		msg->timeout = timeout;
@@ -264,7 +266,7 @@ return "";
 Q_INVOKABLE QStringList QMyDBusAbstractAdaptor::GetCapabilities()
 {
 QStringList lst;
-lst << "body" << "body-markup" << "body-hyperlinks" << "body-images" << "icon-static" << "image/svg+xml" << "private-synchronous" << "append"  << "x-canonical-private-synchronous";
+lst << "body" << "body-markup" << "body-hyperlinks" << "body-images" << "actions" << "icon-static" << "image/svg+xml" << "private-synchronous" << "append"  << "x-canonical-private-synchronous";
 return lst;
 }
 
