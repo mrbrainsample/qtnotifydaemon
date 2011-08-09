@@ -42,8 +42,6 @@ public slots:
 	void showWidget();
 	void hideWidget(int reason = 4);
 	void fadeWidget();
-	void hideWidgetAndEmitActionInvoked();
-	void hideWidgetCozExpired();
 signals:
 	void NotificationClosed(unsigned,unsigned);
 	void ActionInvoked(unsigned int, QString);
