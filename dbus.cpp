@@ -37,7 +37,7 @@ for(std::vector<Message*>::iterator idIter=notificationArea->messageWidget->mess
 			{
 			delete *idIter;
 			notificationArea->messageWidget->messageStack->erase(idIter);
-			emit NotificationClosed(id,4);
+			emit NotificationClosed(id,3);
 			}
 		break;
 		}
@@ -56,7 +56,7 @@ for(std::vector<Message*>::iterator idIter=notificationArea->notificationWidget-
 			{
 			delete *idIter;
 			notificationArea->notificationWidget->messageStack->erase(idIter);
-			emit NotificationClosed(id,4);
+			emit NotificationClosed(id,3);
 			}
 		break;
 		}
