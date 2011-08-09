@@ -58,4 +58,5 @@ private:
 signals:
 
 	Q_INVOKABLE void NotificationClosed(unsigned id, unsigned reason);
+	Q_INVOKABLE void ActionInvoked(unsigned int, QString);
 };

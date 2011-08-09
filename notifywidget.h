@@ -40,10 +40,13 @@ public:
 	std::vector<Message*> *messageStack;
 public slots:
 	void showWidget();
-	void hideWidget();
+	void hideWidget(int reason = 4);
 	void fadeWidget();
+	void hideWidgetAndEmitActionInvoked();
+	void hideWidgetCozExpired();
 signals:
 	void NotificationClosed(unsigned,unsigned);
+	void ActionInvoked(unsigned int, QString);
 private:
 NotifyArea *parent;
 QTimer *fadeTimer;

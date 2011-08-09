@@ -70,6 +70,11 @@ QMyDBusAbstractAdaptor::QMyDBusAbstractAdaptor(QApplication *application, Notify
 	connect(Area->notificationWidget,SIGNAL(NotificationClosed(unsigned,unsigned)),this,SIGNAL(NotificationClosed(unsigned,unsigned)));
 	connect(Area->messageWidget,SIGNAL(NotificationClosed(unsigned,unsigned)),this,SIGNAL(NotificationClosed(unsigned,unsigned)));
 
+	connect(Area->notificationWidget,SIGNAL(ActionInvoked(unsigned int,QString)),this,SIGNAL(ActionInvoked(unsigned int,QString)));
+	connect(Area->messageWidget,SIGNAL(ActionInvoked(unsigned int,QString)),this,SIGNAL(ActionInvoked(unsigned int,QString)));
+
+
+
 	notificationArea = Area;
 	Area->adaptor = this;
 }

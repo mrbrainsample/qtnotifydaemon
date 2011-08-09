@@ -47,10 +47,10 @@ fadeTimer = new QTimer();
 
 icon->setScaledContents(true);
 
-connect(timer, SIGNAL(timeout()), this, SLOT(hideWidget()));
+connect(timer, SIGNAL(timeout()), this, SLOT(hideWidgetCozExpired()));
 connect(fadeTimer, SIGNAL(timeout()), this, SLOT(fadeWidget()));
-connect(text, SIGNAL(clicked()), this,SLOT(hideWidget()));
-connect(icon, SIGNAL(clicked()), this,SLOT(hideWidget()));
+connect(text, SIGNAL(clicked()), this,SLOT(hideWidgetAndEmitActionInvoked()));
+connect(icon, SIGNAL(clicked()), this,SLOT(hideWidgetAndEmitActionInvoked()));
 
 this->setWindowFlags(Qt::SplashScreen | Qt::WindowStaysOnTopHint);
 text->setAttribute(Qt::WA_NoSystemBackground);
@@ -115,11 +115,20 @@ for(std::vector<Message*>::iterator iter=messageStack->begin(); iter != messageS
 if(parent->debugMode) fprintf(stderr,"Appending complete\n");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void NotifyWidget::hideWidget()
+void NotifyWidget::hideWidgetAndEmitActionInvoked()
+{
+emit ActionInvoked((*messageStack->front()).id,"default");
+this->hideWidget(2);
+}
+//-----------------------------------------------------------------------------
+void NotifyWidget::hideWidgetCozExpired() { hideWidget(1); }
+
+//-----------------------------------------------------------------------------
+void NotifyWidget::hideWidget(int reason)
 {
 if(parent->debugMode) fprintf(stderr,"Attempt to hide widget\n");
 this->timer->stop();
-emit NotificationClosed((*messageStack->front()).id,4);
+emit NotificationClosed((*messageStack->front()).id, reason);
 if(parent->debugMode) fprintf(stderr,"Erasing first notification is stack\n");
 
 delete messageStack->front();
