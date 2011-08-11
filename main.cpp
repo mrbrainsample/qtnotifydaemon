@@ -45,10 +45,21 @@ UrgencyTag3 = <b><u><font color=red>\n\
 Opacity = 0.8\n\
 MaxIconSize = 80\n\
 \n\
-#Widgets position: 0 - bottomLeft, 1 - bottomRight, 2 - topLeft, 3 - topRight\n\
+#Widgets position: \n\
+# 0 (or BL) - bottomLeft\n\
+# 1 (or BR) - bottomRight\n\
+# 2 (or TL) - topRight\n\
+# 3 (or TL) - topLeft \n\
+# 4 (or C) - center of screen\n\
+# 5 (or RC) - middle of right edge of screen\n\
+# 6 (or TC) - middle of right edge of screen\n\
+# 7 (or LC) - middle of right left of screen\n\
+# 8 (or BC) - middle of bottom edge of screen\n\
+# Auto or -1 - at system tray\n\
 #Positions of two widgets must differ\n\
-MessageWidgetPosition = 1\n\
-NotificationWidgetPosition = 3\n\
+\n\
+MessageWidgetPosition = Auto\n\
+NotificationWidgetPosition = Auto\n\
 \n\
 #Convert special symbols. \"&lt;\" to <, \"&gt;\" to >, \"&apos\"; to ', \"&quot;\" to \", 1 = yes, 2 = no\n\
 ConvertSpecialSymbols = 1\n\

@@ -18,11 +18,15 @@
 
 
 #include <QToolTip> //alex
+#include <QX11Info> //alex
+#include <QSystemTrayIcon> //alex
 #include <QDesktopWidget>
 #include <fstream>
 #include "notifyarea.h"
 #include "notifywidget.h"
 #include "dbus.h"
+
+#include <X11/Xlib.h> //alex
 
 NotifyArea::NotifyArea(char *configPath, bool debug)
 {
@@ -37,6 +41,8 @@ if(debugMode) fprintf(stderr,"MessageWidget created.\n");
 notificationWidget = new NotifyWidget("NotificationWidget",&notificationStack, this);
 if(debugMode) fprintf(stderr,"NotificationWidget created.\n");
 index = (unsigned int) 1;
+
+trayIcon = new QSystemTrayIcon(QIcon::fromTheme("dialog-information"),this); //alex: real icon required to get geometry later
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +148,66 @@ if(debugMode) fprintf(stderr,"Got desktop geometry.\n");
 
 QString position = this->readConfigString(QString(widgetName)+"Position");
 if(debugMode) fprintf(stderr,"Got widget position from config.\n");
+
+	if (position.isNull() || position.isEmpty() || //alex: autodetect 'position' by current system tray location
+	    position=="-1" || position=="Auto")
+	{
+		Display *display  = QX11Info::display();
+		QString trayAtomName;
+		trayAtomName.setNum(QX11Info::appScreen());
+		trayAtomName.prepend("_NET_SYSTEM_TRAY_S");
+		
+		Atom trayAtom = XInternAtom(display,trayAtomName.toLocal8Bit().data(),false);
+	
+		Window trayW = XGetSelectionOwner(display,trayAtom);
+		if (trayW!=None)
+		{
+		    Window child, junkRoot;
+		    int i, x,y, width,height, root_x,root_y, root_width, root_height;
+		    unsigned int junkBW, junkDepth;
+
+		    XGetGeometry(display, QX11Info::appRootWindow(), &junkRoot, 
+			&x,&y,(unsigned int *)&root_width,(unsigned int *)&root_height, &junkBW, &junkDepth);
+		    XGetGeometry(display, trayW, &junkRoot, 
+			&x,&y,(unsigned int *)&width,(unsigned int *)&height, &junkBW, &junkDepth);
+		    XTranslateCoordinates(display, trayW, QX11Info::appRootWindow(), 0,0, &root_x, &root_y, &child);
+
+		    //invisible tray window (gnome, etc.) - check by tray icon geometry
+		    if (root_x<0 || root_x>root_width || root_y<0 || root_y>root_height) 
+		    {
+			trayIcon->show();
+			
+			XSync(display,false);
+			
+			QRect r = trayIcon->geometry();
+			root_x = r.x();
+			root_y = r.y();
+			
+			trayIcon->hide();
+		    }
+
+		    int dw = root_width/3;
+		    int dh = root_height/3;
+		    QRect screenRect[8];
+		    screenRect[0]=QRect(0,dh*2,dw,dh);
+		    screenRect[1]=QRect(dw*2,dh*2,dw,dh);
+		    screenRect[2]=QRect(dw*2,0,dw,dh);
+		    screenRect[3]=QRect(0,0,dw,dh);
+		    screenRect[4]=QRect(dw,dh,dw,dh);
+		    screenRect[5]=QRect(dw*2,dh,dw,dh);
+		    screenRect[6]=QRect(dw,0,dw,dh);
+		    screenRect[7]=QRect(0,dh,dw,dh);
+		    for (i=0;i<8;i++)
+		    {
+		      if (screenRect[i].contains(QPoint(root_x,root_y))) { position.setNum(i); break; }
+		    }
+		}
+		else //no tray - use some default
+		{
+		    position="1";
+		    if(debugMode) fprintf(stderr,"No system tray found!\n");
+		}
+	}
 
 	if(position=="0" || position=="BL")
 		p = desktopGeometry.bottomLeft();

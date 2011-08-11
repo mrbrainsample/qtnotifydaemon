@@ -26,6 +26,7 @@
 
 class NotifyWidget;
 class QMyDBusAbstractAdaptor;
+class QSystemTrayIcon; //alex
 
 class Message
 {
@@ -57,6 +58,7 @@ void ReReadConfig();
 
 NotifyWidget *messageWidget;
 NotifyWidget *notificationWidget;
+QSystemTrayIcon *trayIcon; //alex
 unsigned int index;
 char *config;
 bool debugMode;
