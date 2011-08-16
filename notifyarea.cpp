@@ -176,13 +176,13 @@ if(debugMode) fprintf(stderr,"Got widget position from config.\n");
 		    if (root_x<0 || root_x>root_width || root_y<0 || root_y>root_height) 
 		    {
 			trayIcon->show();
-			
-			XSync(display,false);
+			XSync(display,false); usleep(50000);
 			
 			QRect r = trayIcon->geometry();
-			root_x = r.x();
-			root_y = r.y();
-			
+			root_x = r.x(); root_y = r.y();
+			if (root_x==0 && root_y==0) {
+				root_x=root_width-1; root_y=root_height-1;
+			}
 			trayIcon->hide();
 		    }
 
