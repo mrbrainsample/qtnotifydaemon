@@ -1,3 +1,4 @@
+<!-- These images are taken from notify-osd-icons v0.9.30-0ubuntu4 package(by Kenneth Wimer) -->
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 <file>images/notification-audio-next.svg</file>
