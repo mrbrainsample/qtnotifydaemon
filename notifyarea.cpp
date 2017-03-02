@@ -25,6 +25,7 @@
 #include "notifyarea.h"
 #include "notifywidget.h"
 #include "dbus.h"
+#include <unistd.h>
 
 #include <X11/Xlib.h> //alex
 

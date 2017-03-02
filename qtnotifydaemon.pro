@@ -8,6 +8,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 QT += dbus
+LIBS += -lX11
 RESOURCES += images.qrc
 
 # Input

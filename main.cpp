@@ -26,6 +26,7 @@
 #include "notifywidget.h"
 #include "notifyarea.h"
 #include <QDBusMessage>
+#include <unistd.h>
 
 //alex: use qtbg, qtfg, border width (1 instead of 3) and other positions (bottom and top right) by default
 char configcontent[1024]="\
